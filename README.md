@@ -2,6 +2,7 @@
 Packages from ROV project post bachelor.
 
 TODO:
-- Make launch files
 - Update parameter setup
 - Change maintainer name etc.
+- Make changes to topic names (remove bluerov2garden format)
+- Add code to interface with acoustic modem
