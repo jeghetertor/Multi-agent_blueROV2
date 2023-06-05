@@ -2,7 +2,6 @@
 - ### Operator_workspace - The ROS2 workspace that controls the ROVs (GUI, trajectory planner)
 - ### ROV_workspace - The ROS2 workspace locally on the ROVs 
 
-
 ### TODO list:
 1. Update parameter setup
 2. Change the maintainer name etc.
@@ -10,3 +9,7 @@
     - Thrusters??
     - odom
 4. Add code to interface with acoustic modem
+
+
+**NB!** If new packages and/or nodes are added. Make sure to add them in the appropriate launch file.
+
