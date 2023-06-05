@@ -6,6 +6,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "std_msgs/msg/bool.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 
@@ -16,6 +17,7 @@ using namespace std::chrono_literals;
 std::vector<float> odom_vec(13,0);
 std::vector<float> odom_pub_vec(13,0);
 std::vector<float> ref_pub_vec(3,0);
+bool record_data = false;
 class MinimalPublisher : public rclcpp::Node
 {
 public:
@@ -24,6 +26,8 @@ public:
   {
     publisher_ = this->create_publisher<nav_msgs::msg::Odometry>("/bluerov2_pid/bluerov3/observer/nlo/odom_ned", 10);
     publisher_1 = this->create_publisher<geometry_msgs::msg::Vector3>("/ref", 10);
+    record_pub = this->create_publisher<std_msgs::msg::Bool>("/record_data", 10);
+
     timer_ = this->create_wall_timer(
       500ms, std::bind(&MinimalPublisher::timer_callback, this));
 
@@ -35,6 +39,7 @@ private:
   void timer_callback()
   {
 	//Take data from comm, and publish to local ROS network
+	//skriv kode her for aa sende via comm
     auto message = nav_msgs::msg::Odometry();
     message.pose.pose.position.x = odom_pub_vec.at(0);
     message.pose.pose.position.y = odom_pub_vec.at(1);
@@ -55,16 +60,19 @@ private:
     ref_msg.y = ref_pub_vec.at(1);
     ref_msg.z = ref_pub_vec.at(2);
 
+    auto rec_msg = std_msgs::msg::Bool();
+    rec_msg.data = record_data;
     publisher_->publish(message);
 
     publisher_1->publish(ref_msg);
-
+    record_pub->publish(rec_msg);
 
     //RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
   }
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr publisher_;
   rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr publisher_1;
+  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr record_pub;
   size_t count_;
   void odom_callback(const nav_msgs::msg::Odometry & msg) const{
 	  // Take odometry from local ROS network, and send over comm
@@ -81,6 +89,7 @@ private:
 		  msg.twist.twist.angular.x,
 		  msg.twist.twist.angular.y,
 		  msg.twist.twist.angular.z};
+	   //Skriv kode her for aa sende via comm
   }
  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub;
 };
