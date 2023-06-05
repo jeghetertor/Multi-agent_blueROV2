@@ -36,7 +36,7 @@ def operator_launch(context, *args, **kwargs):
     launch_list = []                        # Empty list used to store nodes
 
     trajectory_node = Node(
-       package='mpc_controller',    # Package name
+       package='operator_package',    # Package name
        executable='setpoint',       # Node executable name from setup.py
        output='log', 
        parameters=[param]
@@ -44,7 +44,7 @@ def operator_launch(context, *args, **kwargs):
     launch_list.append(trajectory_node)
 
     gui_node = Node(                        # Graphical User Interface node
-        package='mpc_controller',           # Package name
+        package='operator_package',           # Package name
         executable='GUI',                   # Node executable name from setup.py
         output='log',
         parameters=[

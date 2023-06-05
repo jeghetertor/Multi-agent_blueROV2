@@ -102,6 +102,9 @@ class GUI(Node):
                 self.angle_callback4to3,
                 10)
 
+        timer_period = 0.1  # seconds
+        self.timer = self.create_timer(timer_period, self.GUI_loop)
+
         self.subscription  # prevent unused variable warning
         self.publisher_1 = self.create_publisher(Vector3, '/trajectory_waypoints', 10)
         self.publisher_control_mode = self.create_publisher(Int32, '/control_mode', 10)
@@ -136,6 +139,7 @@ class GUI(Node):
 
         ## Initializing variables to be used in the main loop
         self.traj_reference = [0,0,0]
+        self.pos1 = [0,0,0]
         self.pos2 = [0,0,0]
         self.pos3 = [0,0,0]
 
@@ -165,10 +169,7 @@ class GUI(Node):
         # Ensuring that the ocean current is set to zero
         os.system("gz topic -t /ocean_current -m gz.msgs.Vector3d -p 'x: 0, y:0, z:0'")
 
-    def ROV1_main_callback(self, msg):
-        """Callback from main odometry and main PySimpleGUI loop"""
-        ### get the position of the ROV
-        self.odom1 = msg.pose.pose.position
+    def GUI_loop(self):
         event, self.values = self.window.read(timeout=5)
         if event in ('-EXIT-', None): # if user closes window or clicks cancel. Stop the program
             exit(69)
@@ -246,7 +247,7 @@ class GUI(Node):
             #os.system("gz topic -t /ocean_current -m gz.msgs.Vector3d -p 'x: 0, y:0, z:0'") # USED WHEN RUNNING WAVES
 
             cooldown_timer = time.time()
-            length1 = np.sqrt((self.odom1.x)**2+(self.odom1.y)**2+(5-self.odom1.z)**2)
+            length1 = np.sqrt((self.pos1[0])**2+(self.pos1[1])**2+(5-self.pos1[2])**2)
             length2 = np.sqrt((self.pos2[0])**2+(self.pos2[1])**2+(5-self.pos2[2])**2)
             # Checking if ROVs are in position for next test
             if(length1 < 2 and
@@ -319,11 +320,11 @@ class GUI(Node):
             if(len(self.trajectory_log_1[0]) > 2000 and len(self.trajectory_log_1[0]) > 0):
                 self.trajectory_log_1[0].pop(0)
                 self.trajectory_log_1[1].pop(0)
-            self.trajectory_log_1[0].append(self.odom1.x)
-            self.trajectory_log_1[1].append(self.odom1.y)
+            self.trajectory_log_1[0].append(self.pos1[0])
+            self.trajectory_log_1[1].append(self.pos1[1])
         else:
             self.trajectory_log_1 = [[],[]]
-        self.ax.scatter(self.odom1.y, self.odom1.x, c='blue', s=40, label='ROV 2')
+        self.ax.scatter(self.pos1[1], self.pos1[0], c='blue', s=40, label='ROV 2')
         self.ax.plot(self.trajectory_log_1[1], self.trajectory_log_1[0], c='blue')
         # Update the canvas with ROV2
         if self.n_multi_agent > 1:
@@ -353,12 +354,18 @@ class GUI(Node):
         self.update_xyz_GUI_indication()
         self.ax.legend()
         self.fig_agg.draw()
+        
+
+    def ROV1_main_callback(self, msg):
+        """Callback from main odometry and main PySimpleGUI loop"""
+        ### get the position of the ROV
+        self.pos1 = [msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z]
 
     def update_xyz_GUI_indication(self):
         """Update the xyz values in the GUI"""
-        self.window['-X_visual-'].update("%.2f"%self.odom1.x)
-        self.window['-Y_visual-'].update("%.2f"%self.odom1.y)
-        self.window['-Z_visual-'].update("%.2f"%self.odom1.z)
+        self.window['-X_visual-'].update("%.2f"%self.pos1[0])
+        self.window['-Y_visual-'].update("%.2f"%self.pos1[1])
+        self.window['-Z_visual-'].update("%.2f"%self.pos1[2])
         if(self.n_multi_agent > 1):
             self.window['-X_visual2-'].update("%.2f"%self.pos2[0])
             self.window['-Y_visual2-'].update("%.2f"%self.pos2[1])
