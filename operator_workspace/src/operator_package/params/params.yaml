@@ -1,0 +1,15 @@
+# Parameter list with default values
+
+# Most of these could be removed in operator package
+
+/**:                       
+  ros_parameters:
+    n_multi_agent: 2            # Size of the fleet: [1 to 3]
+    debug_rov: 0                # Output in terminal: [0 or 1] for Setpoint publishing, [2 to 4] for output from IPOPT for ROV2 to ROV4
+    FOV_constraint: True        # Use Field of View Constraint: [True/False]
+    radius_setp: 2.0            # Radius on the setpoint circle in meters: [Float]
+    distance_rovs: 2.0          # Distance between ROVs in meters: [Float]
+    FOV_range_deg: 60.0         # Hard constraint on Field of View angle in degrees: [Float]
+    FOV_range_soft_deg: 30.0    # Soft constraint on Field of View angle in degrees: [Float] (Should be less than Hard constraint)
+    cycle_time_publish: 0.05    # Cycle time in seconds for publishing values : [Float]
+
