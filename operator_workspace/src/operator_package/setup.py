@@ -24,8 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        'GUI = mpc_controller.GUI:main',
-        'setpoint = mpc_controller.setpoint_publisher:main',
+        'GUI = operator_package.GUI:main',
+        'setpoint = operator_package.setpoint_publisher:main',
         ],
     },
 )
