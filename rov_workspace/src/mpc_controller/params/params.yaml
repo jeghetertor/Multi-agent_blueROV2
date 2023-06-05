@@ -2,7 +2,7 @@
 
 /**:                       
   ros_parameters:
-    rov_id: 1                   # ID of the ROV: [1 to n_multi_agent]
+    rov_id: 1                   # ID of the ROV: [0 to n_multi_agent-1]
     n_multi_agent: 2            # Size of the fleet: [1 to 3]
     debug_rov: 0                # Output in terminal: [0 or 1] for Setpoint publishing, [2 to 4] for output from IPOPT for ROV2 to ROV4
     FOV_constraint: True        # Use Field of View Constraint: [True/False]
