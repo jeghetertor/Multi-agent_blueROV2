@@ -37,14 +37,14 @@ def operator_launch(context, *args, **kwargs):
 
     trajectory_node = Node(
        package='operator_package',    # Package name
-       executable='setpoint',       # Node executable name from setup.py
+       executable='setpoint',         # Node executable name from setup.py
        output='log', 
        parameters=[param]
     )
     launch_list.append(trajectory_node)
 
     gui_node = Node(                        # Graphical User Interface node
-        package='operator_package',           # Package name
+        package='operator_package',         # Package name
         executable='GUI',                   # Node executable name from setup.py
         output='log',
         parameters=[
@@ -55,6 +55,14 @@ def operator_launch(context, *args, **kwargs):
         ]
     )
     launch_list.append(gui_node)
+
+    data_node = Node(                        
+        package='operator_data_interface',           
+        executable='operator_data_interface_node',
+        output='log',
+        parameters=[param]
+    )
+    launch_list.append(data_node)
 
     return launch_list # Returns the list with nodes
 
