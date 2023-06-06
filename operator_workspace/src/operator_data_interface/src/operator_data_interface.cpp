@@ -21,7 +21,7 @@ class MinimalPublisher : public rclcpp::Node
 {
   public:
     MinimalPublisher()
-    : Node("minimal_publisher"), count_(0)
+    : Node("operator_data_interface"), count_(0)
     {
       odom2_pub = this->create_publisher<nav_msgs::msg::Odometry>("/bluerov2_pid/bluerov2/observer/nlo/odom_ned", 10);
       odom3_pub = this->create_publisher<nav_msgs::msg::Odometry>("/bluerov3_pid/bluerov2/observer/nlo/odom_ned", 10);
