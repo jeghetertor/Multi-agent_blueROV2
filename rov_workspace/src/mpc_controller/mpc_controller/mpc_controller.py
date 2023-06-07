@@ -31,7 +31,7 @@ from geometry_msgs.msg import Vector3
 
 class BluerovPubSubNode(Node):
     def __init__(self):
-        super().__init__('bluerov_pubsub')
+        super().__init__('MPC_node')
         self.ready_signal_mpc = False # Flag to start the MPC
 
         # Node launch parameters being declared
@@ -141,31 +141,24 @@ class BluerovPubSubNode(Node):
             10)
 
        
-        multi_agent_id = [i for i in range(self.n_multi_agent)] #List of ROV IDs
-        multi_agent_id.pop(self.main_id) #Remove the main ROV ID from the list
+        multi_agent_id = [i for i in range(2,(self.n_multi_agent+2))] #List of ROV IDs
+        multi_agent_id.pop(self.main_id - 2) #Remove the main ROV ID from the list
 
          # Subscribing to the odometry to the other ROVs in the fleet
         if(self.n_multi_agent > 1): 
             self.odometry_2_subscriber = self.create_subscription(  
                 Odometry, # Message type
                 "/bluerov2_pid/bluerov{}/observer/nlo/odom_ned".format(
-                    multi_agent_id[self.main_id-1]), # Topic
+                    multi_agent_id[self.main_id-self.n_multi_agent-1]), # Topic
                 self.odometry_callback_2, # Callback function
                 10)
                 
-            self.sec_rov = multi_agent_id[self.main_id-1]  ## TO BE REMOVED AT A LATER STAGE
-            multi_agent_id.pop(self.main_id-1)
+            self.sec_rov = multi_agent_id[self.main_id-self.n_multi_agent-1]  ## TO BE REMOVED AT A LATER STAGE
+            multi_agent_id.pop(self.main_id-self.n_multi_agent-1)
             self.angle_publisher = self.create_publisher( ## TO BE REMOVED AT A LATER STAGE
                 Float64, # Message type
                 'angle/from_{}_to_{}'.format(self.main_id, self.sec_rov), # Topic
                 10) 
-            
-        if(self.n_multi_agent > 2):
-            self.odometry_3_subscriber = self.create_subscription( 
-                Odometry, # Message type
-                "/bluerov2_pid/bluerov{}/observer/nlo/odom_ned".format(multi_agent_id[0]), # Topic
-                self.odometry_callback_3, # Callback function
-                10)
             
             self.third_rov = multi_agent_id[0]  ## TO BE REMOVED AT A LATER STAGE
             
