@@ -10,7 +10,6 @@ Functionality:
     - Run standard tests on the ROV
     - Set ocean current
     - Control the ROV with a joystick
-    - Read system parameters
 _________________________________________________________________________________________________"""
 
 #Import Python modules and functions
@@ -175,8 +174,6 @@ class GUI(Node):
             exit(69)
         if event == '-SET_P-':      # Setting new waypoint
             self.publish_waypoint()
-        if event == '-READ-':       # Reading parameters from file
-            self.open_window()
         if event == '-SET_CUR-':    # Setting ocean current
             self.set_ocean_current()
         if event == '-RESET_CUR-': # Resetting ocean current
@@ -477,9 +474,8 @@ class GUI(Node):
             sg.Checkbox('', default=False, key='-TRAJ3-',text_color="black", font=font, background_color=button_col) if self.n_multi_agent > 2 else sg.Text('',size=(0,0), background_color=background_col),  
             sg.Text('', size=(checkbox_spacing_w+1, 2), background_color=background_col, font=font,text_color=text_col) if self.n_multi_agent > 2 else sg.Text('',size=(0,0), background_color=background_col),    
             ],
-            [sg.Button('Read System Parameters', size=(9, 2), font=font, key='-READ-', button_color=('black', button_col), pad=((0, 0), (10, 0))),
-            sg.Text('', background_color=background_col, size=(20, 1)),
-            sg.Button('Exit', size=(25, 2), font=font, key='-EXIT-', button_color=('white', 'red'), pad=((0, 0), (10, 0)))
+            [
+            sg.Button('Exit', size=(40, 2), font=font, key='-EXIT-', button_color=('white', 'red'), pad=((0, 0), (10, 0)))
             ],
             ]
         self.sec_col = [
@@ -692,38 +688,7 @@ class GUI(Node):
         self.window['-ANGLE_43-'].update("%.2f"%msg.data)
 
     def std_test_sub_callback(self, msg):
-        self.std_test_ready_next = msg.data
-
-    def open_window(self):
-        """Opens a new window with parameters"""
-        cwd = os.getcwd()
-        params_path = cwd + "/src/mpc_controller/params/params.yaml"
-
-        with open(str(params_path)) as my_file:
-            docu = []
-            for line in my_file:
-                docu.append(line)
-        layout = [
-            [sg.Text("Parameters", font=("Helvetica", 25), text_color="white")],
-            [sg.Text(docu[2])],
-            [sg.Text(docu[3])],
-            [sg.Text(docu[4])],
-            [sg.Text(docu[5])],
-            [sg.Text(docu[6])],
-            [sg.Text(docu[7])],
-            [sg.Text(docu[8])],
-            #[sg.Text(str(pwd))]
-            [sg.Button("Exit", key="Exit")]
-        ]
-        window = sg.Window("Parameters", layout, modal=True)
-        choice = None
-        while True:
-            event, values = window.read()
-            if event == "Exit" or event == sg.WIN_CLOSED:
-                break
-        
-        window.close()
-        
+        self.std_test_ready_next = msg.data        
 
     def draw_figure(self,canvas, figure):
         figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
