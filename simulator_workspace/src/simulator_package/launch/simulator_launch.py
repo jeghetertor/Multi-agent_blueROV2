@@ -14,14 +14,13 @@ import os
 import sys
 import yaml
 
-def operator_launch(context, *args, **kwargs):
+def simulator_launch(context, *args, **kwargs):
     """
     Setting up multiple nodes for launch
     """
-
     # Storing the path to YAML file (mpc_controller/params/params.yaml)
     param_path = os.path.join(
-        get_package_share_directory('operator_package'),
+        get_package_share_directory('simulator_package'),
         'params',
         'params.yaml'
     )
@@ -36,7 +35,7 @@ def operator_launch(context, *args, **kwargs):
     launch_list = []                        # Empty list used to store nodes
 
     trajectory_node = Node(
-       package='operator_package',    # Package name
+       package='simulator_package',    # Package name
        executable='setpoint',         # Node executable name from setup.py
        output='log', 
        parameters=[param]
@@ -44,7 +43,7 @@ def operator_launch(context, *args, **kwargs):
     launch_list.append(trajectory_node)
 
     gui_node = Node(                        # Graphical User Interface node
-        package='operator_package',         # Package name
+        package='simulator_package',         # Package name
         executable='GUI',                   # Node executable name from setup.py
         output='log',
         parameters=[
@@ -56,18 +55,18 @@ def operator_launch(context, *args, **kwargs):
     )
     launch_list.append(gui_node)
 
-    data_node = Node(                        
-        package='operator_data_interface',           
-        executable='operator_data_interface_node',
-        output='log',
-        parameters=[param]
-    )
-    launch_list.append(data_node)
+    # data_node = Node(                        
+    #     package='simulator_data_interface',           
+    #     executable='simulator_data_interface_node',
+    #     output='log',
+    #     parameters=[param]
+    # )
+    # launch_list.append(data_node)
 
     return launch_list # Returns the list with nodes
 
 #Launching of nodes
 def generate_launch_description():
     return LaunchDescription([
-        OpaqueFunction(function=operator_launch)
+        OpaqueFunction(function=simulator_launch)
     ])

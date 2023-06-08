@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import setup
 
-package_name = 'operator_package'
+package_name = 'simulator_package'
 
 setup(
     name=package_name,
@@ -24,8 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        'GUI = operator_package.GUI:main',
-        'setpoint = operator_package.setpoint_publisher:main',
+        'GUI = simulator_package.GUI:main',
+        'setpoint = simulator_package.setpoint_publisher:main',
         ],
     },
 )
