@@ -160,6 +160,13 @@ class BluerovPubSubNode(Node):
                 'angle/from_{}_to_{}'.format(self.main_id, self.sec_rov), # Topic
                 10) 
             
+        if(self.n_multi_agent > 2):
+            self.odometry_3_subscriber = self.create_subscription( 
+                Odometry, # Message type
+                "/bluerov2_pid/bluerov{}/observer/nlo/odom_ned".format(multi_agent_id[0]), # Topic
+                self.odometry_callback_3, # Callback function
+                10)
+            
             self.third_rov = multi_agent_id[0]  ## TO BE REMOVED AT A LATER STAGE
             
             self.angle_publisher2 = self.create_publisher( ## TO BE REMOVED AT A LATER STAGE
